@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            /* Ensures padding is part of the box model for all elements */
+            box-sizing: border-box; 
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 24px 30px;
+            box-sizing: border-box; /* Ensures padding is included in the width */
+        }
+
+        /* --- NEW CSS FOR RESPONSIVE IMAGE --- */
+        .logo-img {
+            display: block;
+            margin: 0 auto 16px; /* Centers the image */
+            max-width: 150px;    /* Max size is 150px */
+            width: 100%;         /* Will shrink to fit if container is smaller */
+            height: auto;        /* Maintains aspect ratio */
+        }
+
+        h1 {
+            color: #111;
+            text-align: center;
+            margin-top: 0; /* Adjusted margin */
+            margin-bottom: 24px;
+            font-size: 1.8rem; /* Set a base font size */
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; 
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        button:hover:not(:disabled) { /* Only hover when not disabled */
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        #status {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+
+        /* --- NEW MEDIA QUERY FOR SMALL SCREENS --- */
+        @media (max-width: 400px) {
+            body {
+                padding: 10px; /* Less padding on the whole page */
+            }
+            .container {
+                padding: 20px 20px; /* Less side-padding inside the white box */
+            }
+            h1 {
+                font-size: 1.5rem; /* Slightly smaller title */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <img src="P1.png" alt="QuestTracker Logo" class="logo-img">
+        
+        <h1>Bug report for QuestTracker</h1>
+        
+        <form id="bugForm">
+            <div class="form-group">
+                <label for="location">What is the Bug all about?</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="summary">Can you please describe what happend?</label>
+                <textarea id="summary" name="summary" rows="5" required></textarea>
+            </div>
+            
+            <button type="submit" id="submitButton">Send Bug Report</button>
+        </form>
+        
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('bugForm');
+        const submitButton = document.getElementById('submitButton');
+        const statusDiv = document.getElementById('status');
+        
+        // --- PASTE YOUR GOOGLE SCRIPT URL HERE ---
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyyBTQuhIuj2y_AGAD7McZptuSg6t5zFQ7Y1RMBiHpXSSPB_WnmUlF0LRrXMtijf9Gd/exec'; 
+        // ----------------------------------------
+
+        form.addEventListener('submit', e => {
+            e.preventDefault(); 
+            submitButton.disabled = true;
+            statusDiv.textContent = 'Submitting...';
+            statusDiv.className = '';
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    statusDiv.textContent = 'Success! Your bug report has been sent.';
+                    statusDiv.className = 'success';
+                    form.reset();
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    statusDiv.textContent = 'Error: Could not send report. Please try again.';
+                    statusDiv.className = 'error';
+                })
+                .finally(() => {
+                    submitButton.disabled = false;
+                });
+        });
+    </script>
+
+</body>
+</html>
