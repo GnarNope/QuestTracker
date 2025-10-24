@@ -18,7 +18,7 @@
         }
         .container {
             width: 100%;
-            max-width: 450px;
+            max-width: 550px;
             background: #fff;
             padding: 30px;
             border-radius: 12px;
@@ -32,6 +32,10 @@
             margin-top: 0;
         }
         .download-button {
+            /* REMOVED: display: none; 
+               We now control this from the script to avoid a flash of content.
+               It will be set to 'inline-block' immediately by the script.
+            */
             display: none; 
             background-color: #4CAF50;
             color: white;
@@ -48,6 +52,8 @@
         .download-button:hover {
             background-color: #45a049;
         }
+        /* This link is no longer needed for auto-download, but we leave it
+           as the 'downloadButton' now handles everything. */
         .hidden-link {
             display: none;
         }
@@ -59,7 +65,6 @@
             height: auto;
         }
         
-        /* --- NEW: Media Query for very small screens --- */
         @media (max-width: 400px) {
             body {
                 padding: 10px; /* Less padding on the whole page */
@@ -77,13 +82,10 @@
 
     <div class="container">
         <img src="P1.png" alt="QuestTracker Logo" class="logo-img">
-        <h1 class="message" id="message">Loading your download...</h1>
+        <h1 class="message" id="message"></h1>
         <a href="#" class="download-button" id="downloadButton" download>
-            Download .apk
         </a>
     </div>
-
-    <a href="#" id="autoDownloadLink" class="hidden-link" download></a>
 
     <script>
         (function() {
@@ -93,30 +95,30 @@
             // Get the HTML elements
             const message = document.getElementById('message');
             const downloadButton = document.getElementById('downloadButton');
-            const autoDownloadLink = document.getElementById('autoDownloadLink');
-
-            // Set the URL for both links
+            
+            // Set the download link for the button
             downloadButton.href = githubApkUrl;
-            autoDownloadLink.href = githubApkUrl; 
 
             // Check if the user is on Android
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             if (/android/i.test(userAgent)) {
                 
                 // --- It's Android ---
-                message.textContent = 'Your download is starting...';
-                autoDownloadLink.click();
-
-                setTimeout(() => {
-                    message.textContent = "If your download didn't start, tap the button below.";
-                    downloadButton.style.display = 'inline-block';
-                }, 2000);
+                // Set the message
+                message.textContent = 'Click the button to download the app. Thank you for Participating in our Beta Testing';
+                // Set the button text
+                downloadButton.textContent = "Download The Application";
+                // Show the button
+                downloadButton.style.display = 'inline-block';
 
             } else {
                 
                 // --- It's iOS, Desktop, or something else ---
-                message.textContent = 'This app is only available for Android devices.';
+                // Set the message
+                message.textContent = 'Thank you for Participating in our Beta Testing';
+                // Set the button text
                 downloadButton.textContent = "Download The Application";
+                // Show the button
                 downloadButton.style.display = 'inline-block';
             }
         })();
