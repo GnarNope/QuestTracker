@@ -13,7 +13,6 @@
             display: grid;
             place-items: center;
             min-height: 100vh;
-            /* Ensures padding is part of the box model for all elements */
             box-sizing: border-box; 
         }
         .container {
@@ -23,24 +22,21 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 24px 30px;
-            box-sizing: border-box; /* Ensures padding is included in the width */
+            box-sizing: border-box;
         }
-
-        /* --- NEW CSS FOR RESPONSIVE IMAGE --- */
         .logo-img {
             display: block;
-            margin: 0 auto 16px; /* Centers the image */
-            max-width: 150px;    /* Max size is 150px */
-            width: 100%;         /* Will shrink to fit if container is smaller */
-            height: auto;        /* Maintains aspect ratio */
+            margin: 0 auto 16px;
+            max-width: 150px;
+            width: 100%;
+            height: auto;
         }
-
         h1 {
             color: #111;
             text-align: center;
-            margin-top: 0; /* Adjusted margin */
+            margin-top: 0;
             margin-bottom: 24px;
-            font-size: 1.8rem; /* Set a base font size */
+            font-size: 1.8rem;
         }
         .form-group {
             margin-bottom: 20px;
@@ -51,14 +47,17 @@
             font-weight: 600;
             color: #333;
         }
+        /* --- UPDATED: Added 'select' --- */
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box; 
             font-size: 1rem;
+            font-family: inherit; /* Make select use the body font */
         }
         .form-group textarea {
             resize: vertical;
@@ -76,7 +75,7 @@
             cursor: pointer;
             transition: background-color 0.2s ease;
         }
-        button:hover:not(:disabled) { /* Only hover when not disabled */
+        button:hover:not(:disabled) {
             background-color: #0056b3;
         }
         button:disabled {
@@ -88,24 +87,18 @@
             margin-top: 15px;
             font-weight: 500;
         }
-        .success {
-            color: green;
-        }
-        .error {
-            color: red;
+        .success { color: green; }
+        .error { color: red; }
+
+        /* --- NEW: Hides feature fields by default --- */
+        #featureFields {
+            display: none;
         }
 
-        /* --- NEW MEDIA QUERY FOR SMALL SCREENS --- */
         @media (max-width: 400px) {
-            body {
-                padding: 10px; /* Less padding on the whole page */
-            }
-            .container {
-                padding: 20px 20px; /* Less side-padding inside the white box */
-            }
-            h1 {
-                font-size: 1.5rem; /* Slightly smaller title */
-            }
+            body { padding: 10px; }
+            .container { padding: 20px 20px; }
+            h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -118,14 +111,35 @@
         <h1>Bug report for QuestTracker</h1>
         
         <form id="bugForm">
-            <div class="form-group">
-                <label for="location">What is the Bug all about?</label>
-                <input type="text" id="location" name="location" required>
-            </div>
             
             <div class="form-group">
-                <label for="summary">Can you please describe what happend?</label>
-                <textarea id="summary" name="summary" rows="5" required></textarea>
+                <label for="reportType">Choose a Feedback Type</label>
+                <select id="reportType" name="report_type">
+                  <option value="Bug-Report">Report Bug</option>
+                  <option value="For-Features">Request Feature</option>
+                </select>
+            </div>
+
+            <div id="bugFields">
+                <div class="form-group">
+                    <label for="location">What is the Bug all about?</label>
+                    <input type="text" id="location" name="bug_location" required>
+                </div>
+                <div class="form-group">
+                    <label for="summary">Can you please describe what happened?</label>
+                    <textarea id="summary" name="bug_summary" rows="5" required></textarea>
+                </div>
+            </div>
+
+            <div id="featureFields">
+                <div class="form-group">
+                    <label for="feature_request">What kind of feature is it?</label>
+                    <input type="text" id="feature_request" name="feature_request">
+                </div>
+                <div class="form-group">
+                    <label for="feature_details">Can you please specify it?</label>
+                    <textarea id="feature_details" name="feature_details" rows="5"></textarea>
+                </div>
             </div>
             
             <button type="submit" id="submitButton">Send Bug Report</button>
@@ -139,10 +153,57 @@
         const submitButton = document.getElementById('submitButton');
         const statusDiv = document.getElementById('status');
         
+        // --- Get all the new elements ---
+        const reportTypeSelect = document.getElementById('reportType');
+        const bugFields = document.getElementById('bugFields');
+        const featureFields = document.getElementById('featureFields');
+        
+        // Get the input fields themselves
+        const bugLocationInput = document.getElementById('location');
+        const bugSummaryInput = document.getElementById('summary');
+        const featureRequestInput = document.getElementById('feature_request');
+        const featureDetailsInput = document.getElementById('feature_details');
+
         // --- PASTE YOUR GOOGLE SCRIPT URL HERE ---
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyyBTQuhIuj2y_AGAD7McZptuSg6t5zFQ7Y1RMBiHpXSSPB_WnmUlF0LRrXMtijf9Gd/exec'; 
         // ----------------------------------------
 
+        // --- NEW: Event listener for the dropdown ---
+        reportTypeSelect.addEventListener('change', (e) => {
+            const selectedValue = e.target.value;
+
+            if (selectedValue === 'Bug-Report') {
+                // Show bug fields, hide feature fields
+                bugFields.style.display = 'block';
+                featureFields.style.display = 'none';
+
+                // Make bug fields required, feature fields not
+                bugLocationInput.required = true;
+                bugSummaryInput.required = true;
+                featureRequestInput.required = false;
+                featureDetailsInput.required = false;
+
+                // Change button text
+                submitButton.textContent = 'Send Bug Report';
+
+            } else if (selectedValue === 'For-Features') {
+                // Show feature fields, hide bug fields
+                bugFields.style.display = 'none';
+                featureFields.style.display = 'block';
+
+                // Make feature fields required, bug fields not
+                bugLocationInput.required = false;
+                bugSummaryInput.required = false;
+                featureRequestInput.required = true;
+                featureDetailsInput.required = true;
+
+                // Change button text
+                submitButton.textContent = 'Send Feature Request';
+            }
+        });
+
+        // --- This submission logic stays the same ---
+        // It automatically sends all data from the form
         form.addEventListener('submit', e => {
             e.preventDefault(); 
             submitButton.disabled = true;
@@ -151,16 +212,24 @@
 
             fetch(scriptURL, { method: 'POST', body: new FormData(form) })
                 .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
+                    if (response.ok) { return response.json(); }
                     throw new Error('Network response was not ok.');
                 })
                 .then(data => {
                     console.log('Success:', data);
-                    statusDiv.textContent = 'Success! Your bug report has been sent.';
+                    statusDiv.textContent = 'Success! Your report has been sent.';
                     statusDiv.className = 'success';
                     form.reset();
+                    
+                    // --- NEW: Reset form to default state ---
+                    bugFields.style.display = 'block';
+                    featureFields.style.display = 'none';
+                    submitButton.textContent = 'Send Bug Report';
+                    bugLocationInput.required = true;
+                    bugSummaryInput.required = true;
+                    featureRequestInput.required = false;
+                    featureDetailsInput.required = false;
+
                 })
                 .catch(error => {
                     console.error('Error!', error.message);
