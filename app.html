@@ -80,7 +80,8 @@
             // --- 1. SET YOUR GITHUB .apk LINK HERE ---
             // This MUST be the direct download link to the .apk file from your GitHub Releases.
             // See instructions below.
-            const githubApkUrl = "https://github.com/GnarNope/QuestTracker/releases/download/v1.0.0/QuestTracker-PreTest.apk";
+            const githubApkUrlweb = "https://github.com/GnarNope/QuestTracker/releases/download/v1.0.1/QuestTracker-PreTest.apk";
+            const githubApkUrl = "https://github.com/GnarNope/QuestTracker/releases/tag/v1.0.1";
             // ----------------------------------------
 
             // Get the HTML elements
@@ -89,7 +90,7 @@
             const autoDownloadLink = document.getElementById('autoDownloadLink');
 
             // Set the URL for both links
-            downloadButton.href = githubApkUrl;
+            downloadButton.href = githubApkUrlweb;
             autoDownloadLink.href = githubApkUrl;
 
             // Check if the user is on Android
