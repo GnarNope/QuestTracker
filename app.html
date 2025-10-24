@@ -23,7 +23,7 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box; /* Ensures padding is included in width */
+            box-sizing: border-box;
         }
         .message {
             font-size: 1.3rem;
@@ -32,10 +32,6 @@
             margin-top: 0;
         }
         .download-button {
-            /* REMOVED: display: none; 
-               We now control this from the script to avoid a flash of content.
-               It will be set to 'inline-block' immediately by the script.
-            */
             display: none; 
             background-color: #4CAF50;
             color: white;
@@ -52,11 +48,6 @@
         .download-button:hover {
             background-color: #45a049;
         }
-        /* This link is no longer needed for auto-download, but we leave it
-           as the 'downloadButton' now handles everything. */
-        .hidden-link {
-            display: none;
-        }
         .logo-img {
             display: block;
             margin: 0 auto 16px;
@@ -65,15 +56,50 @@
             height: auto;
         }
         
+        /* --- NEW CSS FOR TOAST NOTIFICATION --- */
+        #toast-notification {
+            display: none; /* Hidden by default */
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #222;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 500;
+        }
+
+        /* This class is added by JS to trigger the animation */
+        #toast-notification.show {
+            display: block;
+            /* Animation: fade in 0.5s, stay 3s, fade out 0.5s */
+            animation: fadeInOut 4s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% { bottom: -100px; opacity: 0; }
+            12.5% { bottom: 30px; opacity: 1; } /* 0.5s fade in */
+            87.5% { bottom: 30px; opacity: 1; } /* 3s stay */
+            100% { bottom: -100px; opacity: 0; } /* 0.5s fade out */
+        }
+        /* --- END OF NEW CSS --- */
+        
         @media (max-width: 400px) {
             body {
-                padding: 10px; /* Less padding on the whole page */
+                padding: 10px;
             }
             .container {
-                padding: 20px 20px; /* Less padding inside the white box */
+                padding: 20px 20px;
             }
             .message {
-                font-size: 1.1rem; /* Slightly smaller text */
+                font-size: 1.1rem;
+            }
+            /* Make toast full width on small screens */
+            #toast-notification {
+                width: calc(100% - 40px);
             }
         }
     </style>
@@ -87,40 +113,45 @@
         </a>
     </div>
 
+    <div id="toast-notification">
+        Thank you for participating!
+    </div>
     <script>
         (function() {
-            // This is the correct, direct download link.
             const githubApkUrl = "https://github.com/GnarNope/QuestTracker/releases/download/v1.0.0/QuestTracker-PreTest.apk";
 
-            // Get the HTML elements
             const message = document.getElementById('message');
             const downloadButton = document.getElementById('downloadButton');
             
-            // Set the download link for the button
+            // --- NEW: Get the toast element ---
+            const toast = document.getElementById('toast-notification');
+            
             downloadButton.href = githubApkUrl;
 
-            // Check if the user is on Android
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             if (/android/i.test(userAgent)) {
-                
-                // --- It's Android ---
-                // Set the message
                 message.textContent = 'Click the button to download the app. Thank you for Participating in our Beta Testing';
-                // Set the button text
                 downloadButton.textContent = "Download The Application";
-                // Show the button
                 downloadButton.style.display = 'inline-block';
-
             } else {
-                
-                // --- It's iOS, Desktop, or something else ---
-                // Set the message
                 message.textContent = 'Thank you for Participating in our Beta Testing';
-                // Set the button text
                 downloadButton.textContent = "Download The Application";
-                // Show the button
                 downloadButton.style.display = 'inline-block';
             }
+
+            // --- NEW: Add click listener for the toast ---
+            downloadButton.addEventListener('click', () => {
+                // Check if the toast is already showing
+                if (!toast.classList.contains('show')) {
+                    toast.classList.add('show');
+                    
+                    // After the animation (4s), remove the class
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 4000);
+                }
+            });
+            // --- END OF NEW SCRIPT ---
         })();
     </script>
 
