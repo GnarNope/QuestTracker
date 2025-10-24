@@ -30,10 +30,9 @@
             font-weight: 500;
             margin-top: 0;
         }
-        /* This is the fallback button */
         .download-button {
-            display: none; /* Hidden by default */
-            background-color: #4CAF50; /* Android Green */
+            display: none; 
+            background-color: #4CAF50;
             color: white;
             text-decoration: none;
             padding: 14px 28px;
@@ -48,7 +47,6 @@
         .download-button:hover {
             background-color: #45a049;
         }
-        /* This is the invisible link the script "clicks" */
         .hidden-link {
             display: none;
         }
@@ -65,9 +63,7 @@
 
     <div class="container">
         <img src="P1.png" alt="QuestTracker Logo" class="logo-img">
-
         <h1 class="message" id="message">Loading your download...</h1>
-
         <a href="#" class="download-button" id="downloadButton" download>
             Download .apk
         </a>
@@ -78,10 +74,11 @@
     <script>
         (function() {
             // --- 1. SET YOUR GITHUB .apk LINK HERE ---
-            // This MUST be the direct download link to the .apk file from your GitHub Releases.
-            // See instructions below.
-            const githubApkUrlweb = "https://github.com/GnarNope/QuestTracker/releases/download/v1.0.1/QuestTracker-PreTest.apk";
-            const githubApkUrl = "https://github.com/GnarNope/QuestTracker/releases/tag/v1.0.1";
+            
+            // This is the correct, direct download link.
+            const githubApkUrl = "https://github.com/GnarNope/QuestTracker/releases/download/v1.0.0/QuestTracker-PreTest.apk";
+            
+            // (I removed the old 'githubApkUrl' variable that pointed to the wrong webpage)
             // ----------------------------------------
 
             // Get the HTML elements
@@ -89,9 +86,10 @@
             const downloadButton = document.getElementById('downloadButton');
             const autoDownloadLink = document.getElementById('autoDownloadLink');
 
-            // Set the URL for both links
-            downloadButton.href = githubApkUrlweb;
-            autoDownloadLink.href = githubApkUrl;
+            // --- FIX ---
+            // Now, both links use the SAME correct URL.
+            downloadButton.href = githubApkUrl;
+            autoDownloadLink.href = githubApkUrl; 
 
             // Check if the user is on Android
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -100,8 +98,7 @@
                 // --- It's Android ---
                 message.textContent = 'Your download is starting...';
 
-                // Try to trigger the auto-download
-                // This will prompt the user to "keep" or "discard" the file.
+                // This will now "click" the link to the .apk file
                 autoDownloadLink.click();
 
                 // After 2 seconds, show the fallback button just in case
@@ -115,7 +112,7 @@
                 // --- It's iOS, Desktop, or something else ---
                 message.textContent = 'This app is only available for Android devices.';
                 
-                // Show a button for non-Android users to download the file anyway (e.g., for desktop)
+                // Show a button for non-Android users to download the file anyway
                 downloadButton.textContent = "Download The Application";
                 downloadButton.style.display = 'inline-block';
             }
