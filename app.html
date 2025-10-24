@@ -23,6 +23,7 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box; /* Ensures padding is included in width */
         }
         .message {
             font-size: 1.3rem;
@@ -57,6 +58,19 @@
             width: 100%;
             height: auto;
         }
+        
+        /* --- NEW: Media Query for very small screens --- */
+        @media (max-width: 400px) {
+            body {
+                padding: 10px; /* Less padding on the whole page */
+            }
+            .container {
+                padding: 20px 20px; /* Less padding inside the white box */
+            }
+            .message {
+                font-size: 1.1rem; /* Slightly smaller text */
+            }
+        }
     </style>
 </head>
 <body>
@@ -73,21 +87,15 @@
 
     <script>
         (function() {
-            // --- 1. SET YOUR GITHUB .apk LINK HERE ---
-            
             // This is the correct, direct download link.
             const githubApkUrl = "https://github.com/GnarNope/QuestTracker/releases/download/v1.0.0/QuestTracker-PreTest.apk";
-            
-            // (I removed the old 'githubApkUrl' variable that pointed to the wrong webpage)
-            // ----------------------------------------
 
             // Get the HTML elements
             const message = document.getElementById('message');
             const downloadButton = document.getElementById('downloadButton');
             const autoDownloadLink = document.getElementById('autoDownloadLink');
 
-            // --- FIX ---
-            // Now, both links use the SAME correct URL.
+            // Set the URL for both links
             downloadButton.href = githubApkUrl;
             autoDownloadLink.href = githubApkUrl; 
 
@@ -97,11 +105,8 @@
                 
                 // --- It's Android ---
                 message.textContent = 'Your download is starting...';
-
-                // This will now "click" the link to the .apk file
                 autoDownloadLink.click();
 
-                // After 2 seconds, show the fallback button just in case
                 setTimeout(() => {
                     message.textContent = "If your download didn't start, tap the button below.";
                     downloadButton.style.display = 'inline-block';
@@ -111,8 +116,6 @@
                 
                 // --- It's iOS, Desktop, or something else ---
                 message.textContent = 'This app is only available for Android devices.';
-                
-                // Show a button for non-Android users to download the file anyway
                 downloadButton.textContent = "Download The Application";
                 downloadButton.style.display = 'inline-block';
             }
